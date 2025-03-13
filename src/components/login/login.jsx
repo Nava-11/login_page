@@ -4,6 +4,7 @@ import { MdEmail } from "react-icons/md";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
 
+
 import "./login.css";
 
 const Login = () => {
@@ -11,7 +12,7 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
-
+    
     const registerLink = () => setAction(" active");
     const loginLink = () => setAction("");
 
@@ -21,7 +22,10 @@ const Login = () => {
         try {
             await signInWithEmailAndPassword(auth, email, password);
             setMessage("Login successful! Redirecting...");
-            setTimeout(() => (window.location.href = "profile.html"), 1500); // Redirect after login
+            setTimeout(() => {
+                window.location.replace("/main_page.html"); // ✅ Ensures full reload
+                // ✅ Redirect to the HTML page
+            }, 1500);
         } catch (error) {
             setMessage("Invalid email or password!");
         }
