@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindfulChat | Your Mental Wellness Companion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin: 0 30px;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: #3d4852;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 1.05rem;
+            position: relative;
+            padding-bottom: 5px;
+        }
+        
+        nav ul li a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            bottom: 0;
+            left: 0;
+            transition: width 0.3s ease;
+        }
+        
+        nav ul li a:hover {
+            color: #2575fc;
+        }
+        
+        nav ul li a:hover:after {
+            width: 100%;
+        }
+        
+        .hero {
+            padding-top: 140px;
+            padding-bottom: 120px;
+            text-align: center;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+        
+        .hero:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("/api/placeholder/1200/800") center/cover no-repeat;
+            opacity: 0.1;
+            mix-blend-mode: overlay;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero h2 {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+        
+        .chat-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 900px;
+            margin: -70px auto 0;
+            position: relative;
+            z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .chat-header {
+            background: #f8f9fa;
+            padding: 20px 25px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .chat-header h3 {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 1.2rem;
+        }
+        
+        .chat-messages {
+            height: 350px;
+            padding: 25px;
+            overflow-y: auto;
+            background-color: #fff;
+        }
+        
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-end;
+        }
+        
+        .message.bot {
+            flex-direction: row;
+        }
+        
+        .message.user {
+            flex-direction: row-reverse;
+        }
+        
+        .message-bubble {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 18px;
+            font-size: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+            line-height: 1.5;
+        }
+        
+        .bot .message-bubble {
+            background-color: #f0f7ff;
+            border-top-left-radius: 4px;
+            margin-right: 50px;
+        }
+        
+        .user .message-bubble {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border-top-right-radius: 4px;
+            margin-left: 50px;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 20px;
+            border-top: 1px solid #eee;
+            background-color: #fff;
+        }
+        
+        .chat-input input {
+            flex-grow: 1;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 30px;
+            background: #f0f7ff;
+            margin-right: 15px;
+            font-size: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+        }
+        
+        .chat-input input:focus {
+            outline: none;
+            box-shadow: 0 2px 15px rgba(37, 117, 252, 0.2);
+        }
+        
+        .chat-input button {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 15px 25px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(37, 117, 252, 0.3);
+        }
+        
+        .chat-input button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 117, 252, 0.4);
+        }
+        
+        .features {
+            padding: 100px 0;
+            background-color: #fff;
+        }
+        
+        .features h2 {
+            text-align: center;
+            margin-bottom: 70px;
+            font-size: 2.5rem;
+            color: #333;
+            position: relative;
+            padding-bottom: 20px;
+        }
+        
+        .features h2:after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+        
+        .feature-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(37, 117, 252, 0.1);
+            color: white;
+            border-color: transparent;
+        }
+        
+        .feature-card:hover:before {
+            opacity: 1;
+        }
+        
+        .feature-card:hover h3,
+        .feature-card:hover p {
+            color: white;
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            background-color: #f0f7ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3a7bd5;
+            font-size: 32px;
+            transition: all 0.4s ease;
+            box-shadow: 0 5px 15px rgba(37, 117, 252, 0.15);
+        }
+        
+        .feature-card:hover .feature-icon {
+            background-color: white;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.4rem;
+            font-weight: 600;
+            transition: all 0.4s ease;
+        }
+        
+        .feature-card p {
+            color: #666;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            transition: all 0.4s ease;
+        }
+        
+        .how-it-works {
+            background-color: #f0f7ff;
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .how-it-works:before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            border-radius: 50%;
+            right: -250px;
+            top: -250px;
+            opacity: 0.05;
+        }
+        
+        .how-it-works:after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            border-radius: 50%;
+            left: -200px;
+            bottom: -200px;
+            opacity: 0.05;
+        }
+        
+        .how-it-works h2 {
+            text-align: center;
+            margin-bottom: 70px;
+            font-size: 2.5rem;
+            color: #333;
+            position: relative;
+            z-index: 2;
+            padding-bottom: 20px;
+        }
+        
+        .how-it-works h2:after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        
+        .steps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 50px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step {
+            flex: 0 0 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background: white;
+            padding: 40px 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s ease;
+        }
+        
+        .step:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(37, 117, 252, 0.1);
+        }
+        
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(37, 117, 252, 0.3);
+        }
+        
+        .step h3 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        
+        .step p {
+            color: #666;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+        
+        .testimonials {
+            padding: 100px 0;
+            text-align: center;
+            background-color: #fff;
+        }
+        
+        .testimonials h2 {
+            margin-bottom: 70px;
+            font-size: 2.5rem;
+            color: #333;
+            position: relative;
+            padding-bottom: 20px;
+        }
+        
+        .testimonials h2:after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+        }
+        
+        .testimonial-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            padding: 50px 30px 30px;
+            position: relative;
+            text-align: left;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(37, 117, 252, 0.1);
+        }
+        
+        .testimonial-card:before {
+            content: '"';
+            position: absolute;
+            top: 25px;
+            left: 30px;
+            font-size: 80px;
+            color: #f0f7ff;
+            font-family: Georgia, serif;
+            line-height: 0;
+        }
+        
+        .testimonial-quote {
+            font-size: 1.05rem;
+            color: #555;
+            margin-bottom: 25px;
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .testimonial-author {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .testimonial-author:before {
+            content: '';
+            width: 30px;
+            height: 2px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            margin-right: 10px;
+            border-radius: 1px;
+        }
+        
+        footer {
+            background-color: #323846;
+            color: white;
+            padding: 60px 0 30px;
+            position: relative;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        
+        .footer-section {
+            flex: 1 1 300px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+            color: white;
+            position: relative;
+            padding-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .footer-section h3:after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            bottom: 0;
+            left: 0;
+            border-radius: 1.5px;
+        }
+        
+        .footer-section p {
+            line-height: 1.7;
+            color: #bbb;
+            margin-bottom: 20px;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-section ul li a {
+            color: #bbb;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            position: relative;
+        }
+        
+        .footer-section ul li a:before {
+            content: '→';
+            margin-right: 8px;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .footer-section ul li a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .footer-section ul li a:hover:before {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #999;
+            font-size: 0.9rem;
+        }
+        
+        .start-btn {
+            display: inline-block;
+            background: white;
+            color: #3a7bd5;
+            font-weight: 600;
+            padding: 16px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            transition: all 0.4s ease;
+            font-size: 1.1rem;
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(37, 117, 252, 0.2);
+            color: #6a11cb;
+        }
+        
+        .nav-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: #333;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 992px) {
+            .feature-grid,
+            .testimonial-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            }
+            
+            .steps {
+                gap: 30px;
+            }
+            
+            .step {
+                flex: 0 0 220px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-btn {
+                display: block;
+                position: absolute;
+                right: 20px;
+                top: 18px;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                padding: 15px;
+                align-items: flex-start;
+            }
+            
+            nav {
+                width: 100%;
+            }
+            
+            nav ul {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background: white;
+                padding: 20px 0;
+                margin-top: 15px;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+                border-radius: 10px;
+            }
+            
+            nav ul.active {
+                display: flex;
+            }
+            
+            nav ul li {
+                margin: 10px 0;
+                width: 100%;
+                text-align: center;
+            }
+            
+            .hero {
+                padding-top: 120px;
+            }
+            
+            .hero h2 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .chat-container {
+                margin: -40px 20px 0;
+            }
+            
+            .features h2,
+            .how-it-works h2,
+            .testimonials h2 {
+                font-size: 2rem;
+            }
+            
+            .step {
+                flex: 0 0 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <nav>
+                    <button class="nav-btn">☰</button>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#testimonials">Testimonials</a></li>
+                        <li><a href="#" class="start-btn">Start Chatting</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container hero-content">
+            <h2>Your Supportive Mental Wellness Companion</h2>
+            <p>Talk through your thoughts, manage stress, and develop coping strategies with our AI-powered mental health chatbot. Available 24/7, judgment-free, and completely confidential.</p>
+            <a href="#" class="start-btn">Start Your Journey Today</a>
+        </div>
+    </section>
+
+    <section class="chat-container">
+        <div class="chat-header">
+            <h3>How can I help you today?</h3>
+        </div>
+        <div class="chat-messages">
+            <div class="message bot">
+                <div class="message-bubble">
+                    Hi there! I'm MindfulChat, your mental wellness companion. How are you feeling today?
+                </div>
+            </div>
+            <div class="message user">
+                <div class="message-bubble">
+                    I've been feeling anxious about work lately.
+                </div>
+            </div>
+            <div class="message bot">
+                <div class="message-bubble">
+                    I understand work anxiety can be challenging. Can you share what specific situations are causing you to feel anxious?
+                </div>
+            </div>
+            <div class="message user">
+                <div class="message-bubble">
+                    I have a big presentation coming up and I'm worried about messing up.
+                </div>
+            </div>
+            <div class="message bot">
+                <div class="message-bubble">
+                    That's a common concern. Let's work through this together. What specific aspects of the presentation are worrying you the most?
+                </div>
+            </div>
+        </div>
+        <div class="chat-input">
+            <input type="text" placeholder="Type your message here...">
+            <button>Send</button>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="container">
+            <h2>How MindfulChat Supports Your Wellbeing</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>24/7 Support</h3>
+                    <p>Access supportive conversations whenever you need them, day or night, without appointment or wait times.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Complete Privacy</h3>
+                    <p>Your conversations are confidential and secure, creating a safe space for open discussion.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3>Evidence-Based Techniques</h3>
+                    <p>Our chatbot uses approaches inspired by cognitive behavioral therapy and mindfulness practices.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Mood Tracking</h3>
+                    <p>Track your emotional patterns over time to gain insights into your mental wellbeing journey.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏆</div>
+                    <h3>Goal Setting</h3>
+                    <p>Set achievable wellness goals and receive encouragement to help you stay on track.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3>Resource Library</h3>
+                    <p>Access a curated collection of articles, exercises, and tools for mental wellness.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <h2>How MindfulChat Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Sign Up</h3>
+                    <p>Create your secure account in less than 2 minutes with just an email address.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Share Your Concerns</h3>
+                    <p>Tell MindfulChat what's on your mind in a judgment-free conversation.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Receive Support</h3>
+                    <p>Get personalized guidance, coping strategies, and reflective questions.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Practice & Grow</h3>
+                    <p>Implement strategies in your daily life and track your progress over time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <h2>What Our Users Say</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">
+                        "MindfulChat has been a lifeline during my stressful work periods. Having someone to talk to anytime has made a huge difference in how I manage anxiety."
+                    </div>
+                    <div class="testimonial-author">Alex T.</div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">
+                        "I was skeptical at first, but the coping techniques MindfulChat suggested have actually helped me sleep better and worry less."
+                    </div>
+                    <div class="testimonial-author">Jamie R.</div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-quote">
+                        "As someone who struggles to open up to others, having this private space to sort through my thoughts has been invaluable for my mental health."
+                    </div>
+                    <div class="testimonial-author">Morgan L.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>MindfulChat</h3>
+                    <p>Your supportive companion for mental wellness, available whenever you need to talk.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#testimonials">Testimonials</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#">Mental Health Articles</a></li>
+                        <li><a href="#">Wellness Exercises</a></li>
+                        <li><a href="#">Crisis Support</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                        <li><a href="#">Disclaimer</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 MindfulChat. All rights reserved. MindfulChat is not a replacement for professional mental health services.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        1741755144745,172,HTTP Request,200,OK,Thread Group 1-1,text,true,,30243,152,1,1,http://127.0.0.1:5500/mental-health-chatbot-main-page.html,157,0,130
+1741755169379,8,HTTP Request,200,OK,Thread Group 1-2,text,true,,30243,152,1,1,http://127.0.0.1:5500/mental-health-chatbot-main-page.html,8,0,1
+1741755194386,42,HTTP Request,200,OK,Thread Group 1-3,text,true,,30243,152,1,1,http://127.0.0.1:5500/mental-health-chatbot-main-page.html,42,0,4
+1741755219399,26,HTTP Request,200,OK,Thread Group 1-4,text,true,,30243,152,1,1,http://127.0.0.1:5500/mental-health-chatbot-main-page.html,25,0,7
+1741755244397,8,HTTP Request,200,OK,Thread Group 1-5,text,true,,30243,152,1,1,http://127.0.0.1:5500/mental-health-chatbot-main-page.html,7,0,2
+1741755269431,20,HTTP Request,200,OK,Thread Group 1-6,text,true,,30243,152,1,1,http://127.0.0.1:5500/mental-health-chatbot-main-page.html,20,0,9
+1741755294408,34,HTTP Request,200,OK,Thread Group 1-7,text,true,,30243,152,1,1,http://127.0.0.1:5500/mental-health-chatbot-main-page.html,34,0,3
+1741755319396,57,HTTP Request,200,OK,Thread Group 1-8,text,true,,30243,152,1,1,http://127.0.0.1:5500/mental-health-chatbot-main-page.html,53,0,11
+1741755344393,43,HTTP Request,200,OK,Thread Group 1-9,text,true,,30243,152,1,1,http://127.0.0.1:5500/mental-health-chatbot-main-page.html,43,0,18
+1741755369393,7,HTTP Request,200,OK,Thread Group 1-10,text,true,,30243,152,1,1,http://127.0.0.1:5500/mental-health-chatbot-main-page.html,7,0,2
+1741755394380,16,HTTP Request,200,OK,Thread Group 1-11,text,true,,30243,152,1,1,http://127.0.0.1:5500/mental-health-chatbot-main-page.html,15,0,4
+1741755419393,20,HTTP Request,200,OK,Thread Group 1-12,text,true,,30243,152,1,1,http://127.0.0.1:5500/mental-health-chatbot-main-page.html,20,0,4
+1741755444377,15,HTTP Request,200,OK,Thread Group 1-13,text,true,,30243,152,1,1,http://127.0.0.1:5500/mental-health-chatbot-main-page.html,14,0,4
+1741755469392,23,HTTP Request,200,OK,Thread Group 1-14,text,true,,30243,152,1,1,http://127.0.0.1:5500/mental-health-chatbot-main-page.html,23,0,8
+1741755494375,10,HTTP Request,200,OK,Thread Group 1-15,text,true,,30243,152,1,1,http://127.0.0.1:5500/mental-health-chatbot-main-page.html,10,0,3
+1741755519378,14,HTTP Request,200,OK,Thread Group 1-16,text,true,,30243,152,1,1,http://127.0.0.1:5500/mental-health-chatbot-main-page.html,14,0,4
+1741755544376,6,HTTP Request,200,OK,Thread Group 1-17,text,true,,30243,152,1,1,http://127.0.0.1:5500/mental-health-chatbot-main-page.html,6,0,1
+1741755569378,14,HTTP Request,200,OK,Thread Group 1-18,text,true,,30243,152,1,1,http://127.0.0.1:5500/mental-health-chatbot-main-page.html,14,0,7
+1741755594368,8,HTTP Request,200,OK,Thread Group 1-19,text,true,,30243,152,1,1,http://127.0.0.1:5500/mental-health-chatbot-main-page.html,8,0,2
+1741757277421,185,HTTP Request,200,OK,Thread Group 1-20,text,true,,30243,152,1,1,http://127.0.0.1:5500/mental-health-chatbot-main-page.html,185,0,3
